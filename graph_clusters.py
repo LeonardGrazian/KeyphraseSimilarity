@@ -1,6 +1,5 @@
 
 import numpy as np
-import pandas as pd
 from scipy import stats
 
 import nltk
@@ -11,6 +10,7 @@ from nltk.corpus import wordnet
 
 from sknetwork.topology import get_connected_components
 
+from utils import get_keyphrases, write_result
 
 # constants
 STOPWORDS = set(
@@ -25,18 +25,6 @@ STOPWORDS = set(
         'statistics'
     ]
 )
-
-
-def get_keyphrases():
-    keyphrases = pd.read_csv(
-        open('input/keyphrases.csv', 'r'),
-        header=None,
-        index_col=None
-    )
-    keyphrases = np.reshape(keyphrases.values, (-1,))
-    keyphrases = keyphrases.tolist()
-
-    return keyphrases
 
 
 def get_synonyms(k):
@@ -82,12 +70,6 @@ def get_similarity_graph(keyphrases):
             similarity = get_similarity(k1, k2)
             similarity_graph[i, j] = similarity
     return similarity_graph
-
-
-def write_result(keyphrases, keyphrase_labels):
-    result = pd.DataFrame({'keyphrase': keyphrases, 'label': keyphrase_labels})
-    result = result.sort_values('label')
-    result.to_csv(open('output/result.csv', 'w'), index=None)
 
 
 def initialize(G, similarity_graph, keyphrases, keyphrase_labels, label):
