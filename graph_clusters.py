@@ -46,7 +46,6 @@ def get_similarity(k1, k2):
     words_in_common = 0
     for k1w in k1_words:
         for k2w in k2_words:
-
             if (
                 k1w in STOPWORDS
                 or k2w in STOPWORDS
@@ -54,7 +53,7 @@ def get_similarity(k1, k2):
                 or len(k2w) < 3
             ):
                 continue
-            if k1w == k2w or is_synonym(k1w, k2w):
+            if k1w == k2w: # or is_synonym(k1w, k2w):
                 words_in_common += 1
     return words_in_common
 

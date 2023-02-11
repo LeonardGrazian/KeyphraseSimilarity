@@ -14,20 +14,26 @@ from utils import get_keyphrases, write_result
 EMBEDDING_DIR = 'embeddings/'
 
 
-def get_embedding(phrase, use_cache=True, verbose=False):
-    embedding_file = EMBEDDING_DIR + phrase.replace(' ', '_') + '.pkl'
+def get_embedding(kp, serp=None, use_cache=True, verbose=False):
+    embedding_file = EMBEDDING_DIR + kp.replace(' ', '_') + '.pkl'
     if use_cache and Path(embedding_file).exists():
         if verbose:
-            print('Using cached embedding for "{}"'.format(phrase))
+            print('Using cached embedding for "{}"'.format(kp))
         embedding = pkl.load(open(embedding_file, 'rb'))
         return embedding
 
     if verbose:
-        print('Fetching embedding for "{}"'.format(phrase))
-    response = openai.Embedding.create(
-        input=phrase,
-        model='text-embedding-ada-002'
-    )
+        print('Fetching embedding for "{}"'.format(kp))
+    if serp:
+        response = openai.Embedding.create(
+            input=kp + ' | ' + serp,
+            model='text-embedding-ada-002'
+        )
+    else:
+        response = openai.Embedding.create(
+            input=kp,
+            model='text-embedding-ada-002'
+        )
     embedding = response['data'][0]['embedding']
     pkl.dump(
         embedding,
